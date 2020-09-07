@@ -50,15 +50,12 @@ public class MemoryProtectionSample
             // Create a file.
             FileStream fStream = new FileStream("Data.dat", FileMode.OpenOrCreate);
 
-            // Create some random entropy.
-            byte[] entropy = CreateRandomEntropy();
-
             Console.WriteLine();
             Console.WriteLine("Original data: " + UnicodeEncoding.ASCII.GetString(toEncrypt));
             Console.WriteLine("Encrypting and writing to disk...");
 
             // Encrypt a copy of the data to the stream.
-            int bytesWritten = EncryptDataToStream(toEncrypt, entropy, DataProtectionScope.CurrentUser, fStream);
+            int bytesWritten = EncryptDataToStream(toEncrypt, null, DataProtectionScope.CurrentUser, fStream);
 
             fStream.Close();
 
@@ -68,7 +65,7 @@ public class MemoryProtectionSample
             fStream = new FileStream("Data.dat", FileMode.Open);
 
             // Read from the stream and decrypt the data.
-            byte[] decryptData = DecryptDataFromStream(entropy, DataProtectionScope.CurrentUser, fStream, bytesWritten);
+            byte[] decryptData = DecryptDataFromStream(null, DataProtectionScope.CurrentUser, fStream, bytesWritten);
 
             fStream.Close();
 
@@ -115,16 +112,12 @@ public class MemoryProtectionSample
         return entropy;
     }
 
-    public static int EncryptDataToStream(byte[] Buffer, byte[] Entropy, DataProtectionScope Scope, Stream S)
+    public static int EncryptDataToStream(byte[] Buffer, byte[] Entropy , DataProtectionScope Scope, Stream S)
     {
         if (Buffer == null)
             throw new ArgumentNullException("Buffer");
         if (Buffer.Length <= 0)
             throw new ArgumentException("Buffer");
-        if (Entropy == null)
-            throw new ArgumentNullException("Entropy");
-        if (Entropy.Length <= 0)
-            throw new ArgumentException("Entropy");
         if (S == null)
             throw new ArgumentNullException("S");
 
@@ -151,10 +144,6 @@ public class MemoryProtectionSample
             throw new ArgumentNullException("S");
         if (Length <= 0)
             throw new ArgumentException("Length");
-        if (Entropy == null)
-            throw new ArgumentNullException("Entropy");
-        if (Entropy.Length <= 0)
-            throw new ArgumentException("Entropy");
 
         byte[] inBuffer = new byte[Length];
         byte[] outBuffer;
